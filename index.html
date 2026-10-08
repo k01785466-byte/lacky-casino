@@ -38,15 +38,11 @@
     background: radial-gradient(circle at 50% 0%, #2a1a10, #0a0d14 60%);
     color: var(--text);
     height: 100%;
-    display: flex;
-    flex-direction: column;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
     overscroll-behavior: none;
     touch-action: manipulation;
-    padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
     position: relative;
   }
 
@@ -67,7 +63,19 @@
   }
 
   /* ============================================================
-     ВЕРХНЯЯ ПАНЕЛЬ — 2 ряда
+     ОСНОВНОЙ LAYOUT
+     ============================================================ */
+  .app {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    position: relative;
+  }
+
+  /* ============================================================
+     ВЕРХНЯЯ ПАНЕЛЬ
      ============================================================ */
   .top-bar {
     display: flex;
@@ -82,7 +90,6 @@
     z-index: 10;
   }
 
-  /* Ряд 1: профиль + баланс */
   .top-row-1 {
     display: flex;
     justify-content: space-between;
@@ -169,12 +176,10 @@
   .balance-hero .amount.win  { color: var(--green); }
   .balance-hero .amount.lose { color: var(--red); }
 
-  /* Ряд 2: мини-статы + кнопки */
   .top-row-2 {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
   }
 
   .mini-stats {
@@ -202,7 +207,6 @@
     font-variant-numeric: tabular-nums;
     min-width: 64px;
     flex-shrink: 0;
-    transition: border-color .2s;
   }
   .mini-stat .lbl {
     font-size: 8px;
@@ -230,64 +234,18 @@
     to   { box-shadow: 0 0 22px rgba(255,203,71,.5); }
   }
 
-  .top-btns {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .icon-btn {
-    width: 42px;
-    height: 42px;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text-mid);
-    border-radius: 10px;
-    font-size: 17px;
-    cursor: pointer;
-    transition: transform .12s, background .15s, border-color .15s, color .15s;
-    font-family: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: manipulation;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .icon-btn:hover  { background: var(--bg-panel); border-color: var(--gold); color: var(--gold); }
-  .icon-btn:active { transform: scale(.92); }
-  .icon-btn.active {
-    background: linear-gradient(135deg, var(--gold), var(--purple));
-    color: #fff;
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(255,203,71,.6);
-  }
-  .icon-btn .badge-dot {
-    position: absolute;
-    top: -4px; right: -4px;
-    width: 12px; height: 12px;
-    background: var(--red);
-    border-radius: 50%;
-    border: 2px solid var(--bg-dark);
-    animation: pulseDot 1.2s ease-in-out infinite;
-  }
-  @keyframes pulseDot {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.2); }
-  }
-
   /* ============================================================
-     ЦЕНТР — АВТОМАТ
+     ИГРОВАЯ ЗОНА
      ============================================================ */
-  .slot-zone {
-    flex: 1;
+  .game-zone {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 16px;
     min-height: 0;
-    gap: 18px;
+    gap: 16px;
+    overflow-y: auto;
     position: relative;
   }
 
@@ -334,7 +292,6 @@
     display: none;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    letter-spacing: .5px;
   }
   .freespins-badge.show { display: block; }
 
@@ -359,18 +316,8 @@
     transition: transform .15s ease, box-shadow .3s, border-color .3s;
     position: relative;
     overflow: hidden;
-    will-change: transform, box-shadow;
-    contain: layout style;
     text-shadow: 0 2px 12px rgba(0,0,0,.6);
-    box-shadow: inset 0 2px 8px rgba(0,0,0,.5), inset 0 -1px 0 rgba(255,255,255,.03);
-  }
-  .cell::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 40%);
-    pointer-events: none;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,.5);
   }
   .cell.spinning {
     border-color: var(--gold);
@@ -381,35 +328,12 @@
       radial-gradient(circle at 50% 20%, rgba(255,203,71,.15), transparent 60%),
       radial-gradient(circle at 50% 30%, #4a3a1a, #2a1f0a 70%);
     border-color: var(--gold);
-    box-shadow:
-      inset 0 2px 8px rgba(0,0,0,.3),
-      0 0 0 2px rgba(255,203,71,.5),
-      0 0 40px rgba(255,203,71,.7);
+    box-shadow: 0 0 0 2px rgba(255,203,71,.5), 0 0 40px rgba(255,203,71,.7);
     animation: winPulse .6s ease-in-out infinite alternate;
   }
   @keyframes winPulse {
     from { transform: scale(1); }
     to   { transform: scale(1.06); }
-  }
-
-  .reels::before,
-  .reels::after {
-    content: '';
-    position: absolute;
-    left: 12px; right: 12px;
-    height: 28px;
-    pointer-events: none;
-    z-index: 3;
-  }
-  .reels::before {
-    top: 4px;
-    background: linear-gradient(180deg, rgba(0,0,0,.6), transparent);
-    border-radius: 18px 18px 0 0;
-  }
-  .reels::after {
-    bottom: 4px;
-    background: linear-gradient(0deg, rgba(0,0,0,.6), transparent);
-    border-radius: 0 0 18px 18px;
   }
 
   .win-line {
@@ -425,9 +349,6 @@
     box-shadow: 0 0 12px rgba(239,68,68,.8);
   }
 
-  /* ============================================================
-     ПАНЕЛЬ СТАВКИ
-     ============================================================ */
   .bet-panel {
     width: 100%;
     max-width: 520px;
@@ -508,14 +429,12 @@
   .quick-btn:active:not(:disabled) { transform: scale(.94); }
   .quick-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-  /* ============================================================
-     КРУГЛАЯ КНОПКА SPIN
-     ============================================================ */
+  /* КРУГЛАЯ КНОПКА SPIN */
   .spin-area {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px 0 24px;
+    padding: 8px 0 8px;
     flex-shrink: 0;
   }
 
@@ -544,7 +463,6 @@
     text-shadow: 0 2px 4px rgba(0,0,0,.5);
     touch-action: manipulation;
     position: relative;
-    will-change: transform;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -552,7 +470,7 @@
     padding: 0;
     line-height: 1;
   }
-  .spin-btn .spin-icon { font-size: 34px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.4)); }
+  .spin-btn .spin-icon { font-size: 34px; }
   .spin-btn .spin-text { font-size: 12px; margin-top: 3px; letter-spacing: 3px; font-weight: 900; }
 
   .spin-btn:hover:not(:disabled) {
@@ -566,30 +484,191 @@
   }
   .spin-btn:active:not(:disabled) {
     transform: translateY(5px);
-    box-shadow:
-      0 5px 0 #7a3d00,
-      0 8px 24px rgba(0,0,0,.6),
-      0 0 40px rgba(255,203,71,.5),
-      inset 0 5px 14px rgba(255,255,255,.4),
-      inset 0 -4px 14px rgba(0,0,0,.2);
+    box-shadow: 0 5px 0 #7a3d00, 0 8px 24px rgba(0,0,0,.6), 0 0 40px rgba(255,203,71,.5);
   }
   .spin-btn:disabled {
-    background:
-      radial-gradient(circle at 35% 25%, rgba(255,255,255,.1), transparent 50%),
-      linear-gradient(145deg, #4a5a6a, #2a3a4a);
+    background: linear-gradient(145deg, #4a5a6a, #2a3a4a);
     box-shadow: 0 6px 0 #1a2634, 0 8px 20px rgba(0,0,0,.4);
     color: #7a8ea0;
     cursor: not-allowed;
   }
-  .spin-btn.ready {
-    animation: spinBtnPulse 2.2s ease-in-out infinite;
-  }
+  .spin-btn.ready { animation: spinBtnPulse 2.2s ease-in-out infinite; }
   @keyframes spinBtnPulse {
-    0%, 100% {
-      box-shadow: 0 10px 0 #7a3d00, 0 14px 34px rgba(0,0,0,.6), 0 0 60px rgba(255,203,71,.5), inset 0 5px 14px rgba(255,255,255,.4), inset 0 -4px 14px rgba(0,0,0,.2);
+    0%, 100% { box-shadow: 0 10px 0 #7a3d00, 0 14px 34px rgba(0,0,0,.6), 0 0 60px rgba(255,203,71,.5), inset 0 5px 14px rgba(255,255,255,.4), inset 0 -4px 14px rgba(0,0,0,.2); }
+    50%      { box-shadow: 0 10px 0 #7a3d00, 0 14px 34px rgba(0,0,0,.6), 0 0 100px rgba(255,203,71,.85), inset 0 5px 14px rgba(255,255,255,.4), inset 0 -4px 14px rgba(0,0,0,.2); }
+  }
+
+  /* ============================================================
+     НАВИГАЦИЯ — ТЕЛЕФОН (по умолчанию внизу)
+     ============================================================ */
+  .nav-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(10,13,20,.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    flex-shrink: 0;
+    z-index: 10;
+    gap: 4px;
+  }
+
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: transform .12s, color .15s, background .15s;
+    font-family: inherit;
+    touch-action: manipulation;
+    border-radius: 10px;
+    position: relative;
+    flex: 1;
+    max-width: 90px;
+    min-height: 52px;
+  }
+  .nav-btn .icon {
+    font-size: 22px;
+    line-height: 1;
+    transition: transform .2s;
+  }
+  .nav-btn .label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    line-height: 1;
+  }
+  .nav-btn:hover  { color: var(--text); background: rgba(255,255,255,.03); }
+  .nav-btn:active { transform: scale(.94); }
+  .nav-btn.active {
+    color: var(--gold);
+    background: rgba(255,203,71,.08);
+  }
+  .nav-btn.active .icon { transform: scale(1.1); }
+  .nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(255,203,71,.7);
+  }
+  .nav-btn .badge-dot {
+    position: absolute;
+    top: 4px; right: 50%;
+    margin-right: -16px;
+    width: 11px; height: 11px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 2px solid var(--bg-dark);
+    animation: pulseDot 1.2s ease-in-out infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+  }
+
+  /* ============================================================
+     ПК: боковая навигация (от 900px)
+     ============================================================ */
+  @media (min-width: 900px) {
+    .app {
+      grid-template-columns: 90px 1fr;
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        "nav top"
+        "nav game";
     }
-    50% {
-      box-shadow: 0 10px 0 #7a3d00, 0 14px 34px rgba(0,0,0,.6), 0 0 100px rgba(255,203,71,.85), inset 0 5px 14px rgba(255,255,255,.4), inset 0 -4px 14px rgba(0,0,0,.2);
+
+    .nav-bar {
+      grid-area: nav;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 20px 8px;
+      gap: 10px;
+      border-top: none;
+      border-right: 1px solid var(--border);
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .nav-btn {
+      width: 100%;
+      max-width: none;
+      flex: 0 0 auto;
+      padding: 12px 6px;
+      min-height: 64px;
+    }
+
+    .nav-btn .icon { font-size: 24px; }
+    .nav-btn .label { font-size: 9px; }
+
+    /* Активная вкладка — подсветка слева */
+    .nav-btn.active::before {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 24px;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .top-bar {
+      grid-area: top;
+      flex-direction: column;
+      padding: 12px 20px 14px;
+    }
+
+    .game-zone {
+      grid-area: game;
+      padding: 24px;
+      gap: 20px;
+    }
+
+    .machine-frame {
+      max-width: 560px;
+    }
+
+    .bet-panel {
+      max-width: 560px;
+    }
+
+    .cell {
+      font-size: clamp(48px, 6vw, 74px);
+    }
+
+    .spin-btn {
+      width: 116px;
+      height: 116px;
+    }
+    .spin-btn .spin-icon { font-size: 38px; }
+    .spin-btn .spin-text { font-size: 13px; }
+
+    /* На ПК в шапке можно показать больше */
+    .top-row-1 {
+      justify-content: space-between;
+    }
+    .profile-name { max-width: 200px; }
+  }
+
+  /* ============================================================
+     ОЧЕНЬ ШИРОКИЙ ПК (от 1400px) — сдвигаем игру в центр
+     ============================================================ */
+  @media (min-width: 1400px) {
+    .game-zone {
+      padding: 32px;
     }
   }
 
@@ -600,8 +679,8 @@
     position: fixed;
     inset: 0;
     background: rgba(3, 5, 10, .9);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -614,10 +693,8 @@
     padding-bottom: calc(12px + var(--safe-bottom));
     overscroll-behavior: contain;
   }
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
   .modal-card {
     background: linear-gradient(180deg, var(--bg-card), var(--bg-panel));
     border: 1px solid rgba(255,255,255,.08);
@@ -628,26 +705,22 @@
     max-height: 92vh;
     overflow-y: auto;
     overscroll-behavior: contain;
-    box-shadow:
-      0 32px 80px rgba(0,0,0,.8),
-      0 0 0 1px rgba(255,255,255,.03),
-      inset 0 1px 0 rgba(255,255,255,.06);
+    box-shadow: 0 32px 80px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
     transform: scale(.92) translateY(10px);
     transition: transform .3s cubic-bezier(.34,1.56,.64,1);
     position: relative;
     margin: auto;
   }
-  .modal-overlay.show .modal-card {
-    transform: scale(1) translateY(0);
-  }
+  .modal-overlay.show .modal-card { transform: scale(1) translateY(0); }
+
   .modal-title {
     font-size: 18px;
     font-weight: 800;
     color: var(--text);
     margin-bottom: 18px;
     text-align: center;
-    letter-spacing: .2px;
   }
+
   .modal-close {
     position: absolute;
     top: 14px; right: 14px;
@@ -668,7 +741,7 @@
   .modal-close:hover  { background: var(--red); color: #fff; border-color: var(--red); }
   .modal-close:active { transform: scale(.92); }
 
-  /* ==== Таблица выплат ==== */
+  /* Таблица выплат */
   .paytable { display: flex; flex-direction: column; gap: 6px; }
   .pay-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -677,24 +750,17 @@
     border: 1px solid rgba(255,255,255,.05);
     border-radius: 12px;
     font-size: 13px;
-    transition: background .2s, border-color .2s, transform .15s;
   }
-  .pay-row:hover { transform: translateX(2px); }
   .pay-row.hit {
     background: rgba(255,203,71,.12);
     border-color: rgba(255,203,71,.5);
     box-shadow: 0 0 20px rgba(255,203,71,.25);
   }
   .pay-symbol { font-size: 20px; letter-spacing: 3px; }
-  .pay-mult {
-    color: var(--gold);
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    font-size: 14px;
-  }
-  .pay-special { color: var(--purple); font-weight: 800; font-size: 12.5px; letter-spacing: .5px; }
+  .pay-mult { color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .pay-special { color: var(--purple); font-weight: 800; font-size: 12.5px; }
 
-  /* ==== Профиль ==== */
+  /* Профиль */
   .profile-hero {
     display: flex;
     flex-direction: column;
@@ -705,7 +771,6 @@
     border: 1.5px solid rgba(168,85,247,.35);
     border-radius: 18px;
     margin-bottom: 20px;
-    box-shadow: 0 0 40px rgba(168,85,247,.15), inset 0 1px 0 rgba(255,255,255,.08);
   }
   .avatar-big {
     width: 96px;
@@ -717,8 +782,7 @@
     font-size: 52px;
     background: linear-gradient(145deg, #2a1f3d, #150d24);
     border: 4px solid var(--purple);
-    box-shadow: 0 0 40px rgba(168,85,247,.6), inset 0 2px 0 rgba(255,255,255,.15);
-    position: relative;
+    box-shadow: 0 0 40px rgba(168,85,247,.6);
     transition: transform .2s;
   }
   .avatar-big:hover { transform: scale(1.05); }
@@ -735,9 +799,7 @@
     font-weight: 900;
     color: var(--text);
     text-align: center;
-    max-width: 100%;
     word-break: break-word;
-    letter-spacing: -.3px;
   }
   .edit-nick-btn {
     padding: 7px 14px;
@@ -750,10 +812,6 @@
     cursor: pointer;
     font-family: inherit;
     transition: .15s;
-    touch-action: manipulation;
-    display: flex;
-    align-items: center;
-    gap: 4px;
   }
   .edit-nick-btn:hover { color: var(--gold); border-color: rgba(255,203,71,.5); background: rgba(255,203,71,.08); }
 
@@ -780,14 +838,10 @@
     outline: none;
     font-family: inherit;
     box-shadow: 0 0 20px rgba(255,203,71,.2);
-    transition: box-shadow .2s;
   }
   .nick-input:focus { box-shadow: 0 0 28px rgba(255,203,71,.4); }
 
-  .nick-buttons-row {
-    display: flex;
-    gap: 8px;
-  }
+  .nick-buttons-row { display: flex; gap: 8px; }
   .nick-save-btn {
     flex: 1;
     padding: 11px 16px;
@@ -797,15 +851,12 @@
     color: #1a1206;
     font-size: 13px;
     font-weight: 900;
-    letter-spacing: .5px;
     cursor: pointer;
     font-family: inherit;
-    transition: transform .15s, box-shadow .2s;
     box-shadow: 0 3px 0 rgba(0,0,0,.3), 0 0 20px rgba(255,203,71,.4);
-    touch-action: manipulation;
   }
-  .nick-save-btn:hover:not(:disabled)  { transform: translateY(-2px); box-shadow: 0 5px 0 rgba(0,0,0,.3), 0 0 30px rgba(255,203,71,.6); }
-  .nick-save-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,0,0,.3); }
+  .nick-save-btn:hover { transform: translateY(-2px); }
+  .nick-save-btn:active { transform: translateY(1px); }
   .nick-save-btn:disabled { opacity: .5; cursor: not-allowed; }
   .nick-cancel-btn {
     padding: 11px 16px;
@@ -817,26 +868,11 @@
     font-weight: 700;
     cursor: pointer;
     font-family: inherit;
-    transition: .15s;
-    touch-action: manipulation;
   }
-  .nick-cancel-btn:hover { background: rgba(255,255,255,.1); color: var(--text); }
-
-  .nick-hint {
-    font-size: 10.5px;
-    color: var(--text-dim);
-    text-align: center;
-    letter-spacing: .2px;
-  }
+  .nick-hint { font-size: 10.5px; color: var(--text-dim); text-align: center; }
   .nick-hint.error { color: var(--red); }
 
-  .profile-stats-row {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+  .profile-stats-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .profile-stat-chip {
     padding: 7px 14px;
     background: rgba(255,255,255,.04);
@@ -856,9 +892,6 @@
     color: var(--text-dim);
     font-weight: 800;
     margin: 18px 0 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
 
   .avatar-grid {
@@ -873,27 +906,21 @@
     border-radius: 12px;
     font-size: 24px;
     cursor: pointer;
-    transition: transform .15s, border-color .15s, background .15s, box-shadow .15s;
+    transition: .15s;
     font-family: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
-    touch-action: manipulation;
     padding: 0;
   }
-  .avatar-option:hover  {
-    transform: scale(1.08);
-    border-color: rgba(255,203,71,.5);
-    background: rgba(255,203,71,.08);
-  }
-  .avatar-option:active { transform: scale(.94); }
+  .avatar-option:hover { transform: scale(1.08); border-color: rgba(255,203,71,.5); background: rgba(255,203,71,.08); }
   .avatar-option.selected {
     border-color: var(--gold);
     background: rgba(255,203,71,.15);
-    box-shadow: 0 0 18px rgba(255,203,71,.5), inset 0 0 12px rgba(255,203,71,.15);
+    box-shadow: 0 0 18px rgba(255,203,71,.5);
   }
 
-  /* ==== Дейлики ==== */
+  /* Дейлики */
   .daily-streak-big {
     text-align: center;
     padding: 18px;
@@ -901,7 +928,6 @@
     border: 1.5px solid rgba(255,203,71,.35);
     border-radius: 16px;
     margin-bottom: 16px;
-    box-shadow: 0 0 30px rgba(255,203,71,.15), inset 0 1px 0 rgba(255,255,255,.08);
   }
   .daily-streak-big .num {
     font-size: 52px;
@@ -912,7 +938,6 @@
     color: transparent;
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    filter: drop-shadow(0 0 20px rgba(255,203,71,.4));
   }
   .daily-streak-big .lbl {
     font-size: 10.5px;
@@ -928,7 +953,6 @@
     font-weight: 800;
     margin-top: 8px;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 12px rgba(255,203,71,.4);
   }
   .daily-timeline {
     display: grid;
@@ -945,7 +969,7 @@
     font-size: 9.5px;
     font-weight: 700;
     color: var(--text-dim);
-    transition: transform .2s, background .2s, border-color .2s, box-shadow .2s;
+    transition: .2s;
   }
   .daily-day.current {
     background: rgba(255,203,71,.15);
@@ -975,31 +999,15 @@
     text-transform: uppercase;
     cursor: pointer;
     font-family: inherit;
-    transition: transform .15s, box-shadow .2s;
     box-shadow: 0 4px 0 rgba(0,0,0,.3), 0 0 30px rgba(255,203,71,.5);
     margin-bottom: 12px;
-    touch-action: manipulation;
   }
-  .daily-claim-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 rgba(0,0,0,.3), 0 0 45px rgba(255,203,71,.7);
-  }
-  .daily-claim-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.3); }
-  .daily-claim-btn:disabled {
-    background: rgba(255,255,255,.05);
-    color: var(--text-dim);
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-  .daily-info {
-    text-align: center;
-    font-size: 11.5px;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
+  .daily-claim-btn:hover:not(:disabled) { transform: translateY(-2px); }
+  .daily-claim-btn:disabled { background: rgba(255,255,255,.05); color: var(--text-dim); cursor: not-allowed; box-shadow: none; }
+  .daily-info { text-align: center; font-size: 11.5px; color: var(--text-dim); line-height: 1.6; }
   .daily-info b { color: var(--gold); }
 
-  /* ==== Статистика ==== */
+  /* Статистика */
   .stats-section { margin-bottom: 20px; }
   .stats-section:last-child { margin-bottom: 0; }
   .stats-section-title {
@@ -1009,13 +1017,8 @@
     color: var(--text-dim);
     font-weight: 800;
     margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
   }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .stat-tile {
     padding: 12px 14px;
     background: rgba(255,255,255,.03);
@@ -1036,18 +1039,12 @@
     font-weight: 900;
     color: var(--gold);
     font-variant-numeric: tabular-nums;
-    line-height: 1.15;
-    letter-spacing: -.3px;
   }
   .stat-tile .val.green  { color: var(--green); }
   .stat-tile .val.red    { color: var(--red); }
   .stat-tile .val.purple { color: var(--purple); }
   .stat-tile .val.small  { font-size: 14px; }
-  .stat-tile .sub {
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
+  .stat-tile .sub { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
   .winrate-bar {
     height: 8px;
     background: rgba(0,0,0,.5);
@@ -1060,7 +1057,6 @@
     background: linear-gradient(90deg, var(--green), #16a34a);
     border-radius: 4px;
     transition: width .6s ease;
-    box-shadow: 0 0 12px rgba(34,197,94,.5);
   }
   .mini-chart {
     display: flex;
@@ -1077,12 +1073,11 @@
     border-radius: 3px;
     transition: height .3s;
     min-height: 5px;
-    opacity: .9;
   }
   .mini-chart-bar.win  { background: linear-gradient(180deg, var(--green), #16a34a); }
   .mini-chart-bar.lose { background: linear-gradient(180deg, var(--red), #b91c1c); }
 
-  /* ==== Оверлей результата ==== */
+  /* Оверлей результата */
   .result-overlay {
     position: fixed;
     inset: 0;
@@ -1096,10 +1091,7 @@
     transition: opacity .25s ease;
     padding: 12px;
   }
-  .result-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  .result-overlay.show { opacity: 1; pointer-events: auto; }
   .result-card {
     background: linear-gradient(180deg, var(--bg-card), var(--bg-panel));
     border: 1.5px solid rgba(255,255,255,.1);
@@ -1112,10 +1104,8 @@
     transition: transform .3s cubic-bezier(.34,1.56,.64,1);
     box-shadow: 0 30px 80px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
   }
-  .result-overlay.show .result-card {
-    transform: scale(1);
-  }
-  .result-card.win  { border-color: rgba(255,203,71,.5); box-shadow: 0 30px 80px rgba(0,0,0,.8), 0 0 60px rgba(255,203,71,.3), inset 0 1px 0 rgba(255,255,255,.08); }
+  .result-overlay.show .result-card { transform: scale(1); }
+  .result-card.win  { border-color: rgba(255,203,71,.5); }
   .result-card.lose { border-color: rgba(255,255,255,.08); opacity: .94; }
   .result-card.big-win {
     border-color: rgba(255,203,71,.6);
@@ -1133,7 +1123,7 @@
     color: var(--text-dim);
     margin-bottom: 14px;
   }
-  .result-card.win .result-title { color: var(--gold); text-shadow: 0 0 12px rgba(255,203,71,.5); }
+  .result-card.win .result-title { color: var(--gold); }
   .result-symbols {
     display: flex;
     justify-content: center;
@@ -1147,18 +1137,12 @@
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 34px;
-    transition: border-color .3s, box-shadow .3s;
   }
   .result-card.win .result-sym {
     border-color: var(--gold);
-    box-shadow: 0 0 25px rgba(255,203,71,.6), inset 0 0 15px rgba(255,203,71,.15);
+    box-shadow: 0 0 25px rgba(255,203,71,.6);
   }
-  .result-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
+  .result-info { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
   .result-row {
     display: flex; justify-content: space-between;
     padding: 8px 14px;
@@ -1167,11 +1151,7 @@
     font-size: 12.5px;
     color: var(--text-dim);
   }
-  .result-row b {
-    color: var(--text);
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-  }
+  .result-row b { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; }
   .result-row.result-total {
     background: rgba(255,203,71,.1);
     border: 1px solid rgba(255,203,71,.4);
@@ -1179,24 +1159,19 @@
     font-size: 13.5px;
     color: var(--gold);
   }
-  .result-row.result-total b {
-    font-size: 20px;
-    color: var(--gold);
-    text-shadow: 0 0 15px rgba(255,203,71,.5);
-  }
+  .result-row.result-total b { font-size: 20px; color: var(--gold); }
   .result-card.lose .result-row.result-total {
     background: rgba(239,68,68,.08);
     border-color: rgba(239,68,68,.4);
     color: var(--red);
   }
-  .result-card.lose .result-row.result-total b { color: var(--red); text-shadow: none; }
+  .result-card.lose .result-row.result-total b { color: var(--red); }
   .result-hint {
     font-size: 10px;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 2.5px;
     margin-top: 6px;
-    font-weight: 700;
   }
 
   .particle {
@@ -1204,16 +1179,13 @@
     pointer-events: none;
     z-index: 200;
     animation: particleFall 1.6s cubic-bezier(.2,.8,.4,1) forwards;
-    will-change: transform, opacity;
     font-size: 24px;
-    user-select: none;
     filter: drop-shadow(0 0 8px rgba(255,203,71,.5));
   }
   @keyframes particleFall {
     0%   { opacity: 1; transform: translate3d(0, 0, 0) rotate(0); }
     100% { opacity: 0; transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--rot)); }
   }
-
   .firework {
     position: fixed;
     width: 7px; height: 7px;
@@ -1221,7 +1193,6 @@
     pointer-events: none;
     z-index: 700;
     animation: fw 1.6s ease-out forwards;
-    box-shadow: 0 0 10px currentColor;
   }
   @keyframes fw {
     0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
@@ -1246,7 +1217,7 @@
     padding: 30px 48px;
     text-align: center;
     animation: lvlUpScale .5s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 0 80px rgba(168,85,247,.7), inset 0 1px 0 rgba(255,255,255,.15);
+    box-shadow: 0 0 80px rgba(168,85,247,.7);
   }
   @keyframes lvlUpScale {
     from { transform: scale(.4); opacity: 0; }
@@ -1267,17 +1238,12 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 0 20px rgba(168,85,247,.6));
   }
-  .levelup-card .sub {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 10px;
-  }
+  .levelup-card .sub { font-size: 12px; color: var(--text-dim); margin-top: 10px; }
 
   .toast {
     position: fixed;
-    bottom: calc(24px + var(--safe-bottom));
+    bottom: calc(90px + var(--safe-bottom));
     left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(22,28,40,.95);
@@ -1295,19 +1261,22 @@
     max-width: calc(90vw - 20px);
     text-align: center;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.error {
     border-color: rgba(239,68,68,.5);
     box-shadow: 0 12px 40px rgba(0,0,0,.7), 0 0 30px rgba(239,68,68,.4);
   }
 
+  @media (min-width: 900px) {
+    .toast {
+      bottom: calc(24px + var(--safe-bottom));
+      left: calc(50% + 45px);
+    }
+  }
+
   /* ============================================================
-     АДАПТИВ
+     МОБИЛЬНАЯ АДАПТАЦИЯ
      ============================================================ */
   @media (max-width: 500px) {
     .top-bar { padding: 8px 10px 10px; gap: 8px; }
@@ -1318,9 +1287,8 @@
     .profile-name { font-size: 12.5px; max-width: 95px; }
     .profile-level { font-size: 9.5px; }
     .mini-stat { padding: 4px 9px; min-width: 54px; }
-    .mini-stat .lbl { font-size: 7.5px; letter-spacing: 1px; }
+    .mini-stat .lbl { font-size: 7.5px; }
     .mini-stat .val { font-size: 12px; }
-    .icon-btn { width: 38px; height: 38px; font-size: 16px; border-radius: 10px; }
     .machine-frame { padding: 14px; border-radius: 22px; }
     .reels { gap: 10px; }
     .cell { font-size: clamp(40px, 15vw, 58px); border-radius: 15px; }
@@ -1330,6 +1298,9 @@
     .spin-btn { width: 96px; height: 96px; }
     .spin-btn .spin-icon { font-size: 30px; }
     .spin-btn .spin-text { font-size: 11px; }
+    .nav-btn { padding: 6px 8px; min-height: 48px; }
+    .nav-btn .icon { font-size: 20px; }
+    .nav-btn .label { font-size: 8.5px; }
     .avatar-grid { grid-template-columns: repeat(5, 1fr); }
     .avatar-big { width: 84px; height: 84px; font-size: 44px; }
     .nickname-display { font-size: 19px; }
@@ -1343,18 +1314,17 @@
     .balance-hero { font-size: 15px; padding: 5px 10px; }
     .spin-btn { width: 88px; height: 88px; }
     .profile-name { max-width: 75px; }
-    .icon-btn { width: 34px; height: 34px; font-size: 15px; }
+    .nav-btn .label { display: none; }
+    .nav-btn { min-height: 42px; }
   }
 
   @media (hover: none) {
-    .icon-btn:hover { background: var(--bg-card); border-color: var(--border); color: var(--text-dim); }
+    .nav-btn:hover { color: var(--text-dim); background: transparent; }
+    .nav-btn.active:hover { color: var(--gold); background: rgba(255,203,71,.08); }
     .bet-btn:hover:not(:disabled) { background: var(--bg-card); border-color: var(--border); color: var(--text); }
     .quick-btn:hover:not(:disabled) { color: var(--text-dim); border-color: var(--border); background: var(--bg-card); }
     .spin-btn:hover:not(:disabled) { transform: none; }
-    .profile-badge:hover { border-color: rgba(168,85,247,.35); background: linear-gradient(135deg, rgba(168,85,247,.12), rgba(59,130,246,.08)); }
     .avatar-option:hover { transform: none; }
-    .stat-tile:hover { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.06); }
-    .pay-row:hover { transform: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1374,87 +1344,109 @@
 
 <div id="parallax-bg"></div>
 
-<div class="top-bar">
-  <div class="top-row-1">
-    <button class="profile-badge" id="btnProfile" type="button">
-      <div class="avatar" id="avatarMini">😎</div>
-      <div class="profile-info">
-        <div class="profile-name" id="nickMini">Игрок</div>
-        <div class="profile-level" id="levelMini">⭐ Ур. 1</div>
-      </div>
+<div class="app">
+
+  <!-- НАВИГАЦИЯ -->
+  <nav class="nav-bar" id="navBar">
+    <button class="nav-btn active" data-nav="game" type="button">
+      <span class="icon">🎰</span>
+      <span class="label">Игра</span>
     </button>
+    <button class="nav-btn" data-nav="table" type="button">
+      <span class="icon">📋</span>
+      <span class="label">Выплаты</span>
+    </button>
+    <button class="nav-btn" data-nav="stats" type="button">
+      <span class="icon">📊</span>
+      <span class="label">Стата</span>
+    </button>
+    <button class="nav-btn" data-nav="daily" id="btnDaily" type="button">
+      <span class="icon">📅</span>
+      <span class="label">Дейлик</span>
+    </button>
+    <button class="nav-btn" data-nav="turbo" id="btnTurbo" type="button">
+      <span class="icon">⚡</span>
+      <span class="label">Турбо</span>
+    </button>
+  </nav>
 
-    <div class="balance-hero">
-      <span class="coin">🪙</span>
-      <span class="amount" id="balance">10 000</span>
-    </div>
-  </div>
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+  <header class="top-bar">
+    <div class="top-row-1">
+      <button class="profile-badge" id="btnProfile" type="button">
+        <div class="avatar" id="avatarMini">😎</div>
+        <div class="profile-info">
+          <div class="profile-name" id="nickMini">Игрок</div>
+          <div class="profile-level" id="levelMini">⭐ Ур. 1</div>
+        </div>
+      </button>
 
-  <div class="top-row-2">
-    <div class="mini-stats">
-      <div class="mini-stat pulse">
-        <span class="lbl">💰 Jackpot</span>
-        <span class="val" id="jackpotValue">10 000</span>
-      </div>
-      <div class="mini-stat">
-        <span class="lbl">⭐ Уровень</span>
-        <span class="val purple" id="levelNum">1</span>
-      </div>
-      <div class="mini-stat">
-        <span class="lbl">🎁 Free</span>
-        <span class="val green" id="freeSpinsMini">0</span>
-      </div>
-    </div>
-
-    <div class="top-btns">
-      <button class="icon-btn" id="btnTable" type="button" title="Выплаты" aria-label="Выплаты">📋</button>
-      <button class="icon-btn" id="btnStats" type="button" title="Статистика" aria-label="Статистика">📊</button>
-      <button class="icon-btn" id="btnDaily" type="button" title="Дейлик" aria-label="Дейлик">📅</button>
-      <button class="icon-btn" id="btnTurbo" type="button" title="Турбо" aria-label="Турбо">⚡</button>
-    </div>
-  </div>
-</div>
-
-<div class="slot-zone">
-  <div class="machine-frame" id="machine">
-    <div class="freespins-badge" id="freespinsBadge">🎁 0 ×5</div>
-
-    <div class="reels" id="reels">
-      <div class="win-line"></div>
-      <div class="cell" data-reel="0"></div>
-      <div class="cell" data-reel="1"></div>
-      <div class="cell" data-reel="2"></div>
-    </div>
-
-    <div style="margin-top:14px;">
-      <div style="height:6px;background:rgba(0,0,0,.5);border-radius:3px;overflow:hidden;">
-        <div id="xpFill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--blue));transition:width .4s ease;border-radius:3px;box-shadow:0 0 12px rgba(168,85,247,.6);"></div>
+      <div class="balance-hero">
+        <span class="coin">🪙</span>
+        <span class="amount" id="balance">10 000</span>
       </div>
     </div>
-  </div>
 
-  <div class="bet-panel">
-    <div class="bet-display">
-      <button class="bet-btn" id="betMinus" type="button" aria-label="Меньше">−</button>
-      <input class="bet-input" type="text" id="betInput" value="1000" inputmode="numeric" aria-label="Ставка">
-      <button class="bet-btn" id="betPlus" type="button" aria-label="Больше">+</button>
+    <div class="top-row-2">
+      <div class="mini-stats">
+        <div class="mini-stat pulse">
+          <span class="lbl">💰 Jackpot</span>
+          <span class="val" id="jackpotValue">10 000</span>
+        </div>
+        <div class="mini-stat">
+          <span class="lbl">⭐ Уровень</span>
+          <span class="val purple" id="levelNum">1</span>
+        </div>
+        <div class="mini-stat">
+          <span class="lbl">🎁 Free</span>
+          <span class="val green" id="freeSpinsMini">0</span>
+        </div>
+      </div>
     </div>
-    <div class="quick-row">
-      <button class="quick-btn" type="button" data-bet="1000">1K</button>
-      <button class="quick-btn" type="button" data-bet="10000">10K</button>
-      <button class="quick-btn" type="button" data-bet="100000">100K</button>
-      <button class="quick-btn" type="button" data-bet="1000000">1M</button>
-      <button class="quick-btn" type="button" data-bet="10000000">10M</button>
-      <button class="quick-btn" type="button" data-bet="max">MAX</button>
-    </div>
-  </div>
-</div>
+  </header>
 
-<div class="spin-area">
-  <button class="spin-btn ready" id="spinBtn" type="button" aria-label="Крутить">
-    <div class="spin-icon">🎰</div>
-    <div class="spin-text">SPIN</div>
-  </button>
+  <!-- ИГРОВАЯ ЗОНА -->
+  <main class="game-zone">
+    <div class="machine-frame" id="machine">
+      <div class="freespins-badge" id="freespinsBadge">🎁 0 ×5</div>
+
+      <div class="reels" id="reels">
+        <div class="win-line"></div>
+        <div class="cell" data-reel="0"></div>
+        <div class="cell" data-reel="1"></div>
+        <div class="cell" data-reel="2"></div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div style="height:6px;background:rgba(0,0,0,.5);border-radius:3px;overflow:hidden;">
+          <div id="xpFill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--blue));transition:width .4s ease;border-radius:3px;box-shadow:0 0 12px rgba(168,85,247,.6);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bet-panel">
+      <div class="bet-display">
+        <button class="bet-btn" id="betMinus" type="button" aria-label="Меньше">−</button>
+        <input class="bet-input" type="text" id="betInput" value="1000" inputmode="numeric" aria-label="Ставка">
+        <button class="bet-btn" id="betPlus" type="button" aria-label="Больше">+</button>
+      </div>
+      <div class="quick-row">
+        <button class="quick-btn" type="button" data-bet="1000">1K</button>
+        <button class="quick-btn" type="button" data-bet="10000">10K</button>
+        <button class="quick-btn" type="button" data-bet="100000">100K</button>
+        <button class="quick-btn" type="button" data-bet="1000000">1M</button>
+        <button class="quick-btn" type="button" data-bet="10000000">10M</button>
+        <button class="quick-btn" type="button" data-bet="max">MAX</button>
+      </div>
+    </div>
+
+    <div class="spin-area">
+      <button class="spin-btn ready" id="spinBtn" type="button" aria-label="Крутить">
+        <div class="spin-icon">🎰</div>
+        <div class="spin-text">SPIN</div>
+      </button>
+    </div>
+  </main>
 </div>
 
 <!-- МОДАЛКИ -->
@@ -1519,20 +1511,20 @@
 'use strict';
 
 /* ============================================================
-   LUCKY SLOTS — классический первый интерфейс
+   LUCKY SLOTS — адаптивная навигация
    ============================================================ */
 
 const SYMBOLS = [
-  { id: 'cherry',  emoji: '🍒', name: 'Вишня',    weight: 30, multiplier: 15     },
-  { id: 'lemon',   emoji: '🍋', name: 'Лимон',    weight: 26, multiplier: 30     },
-  { id: 'bell',    emoji: '🔔', name: 'Колокол',  weight: 17, multiplier: 75     },
-  { id: 'diamond', emoji: '💎', name: 'Алмаз',    weight: 11, multiplier: 250    },
-  { id: 'seven',   emoji: '7️⃣', name: 'Семёрка',  weight: 6,  multiplier: 1000   },
-  { id: 'star',    emoji: '⭐', name: 'Звезда',   weight: 3,  multiplier: 5000   },
-  { id: 'crown',   emoji: '👑', name: 'Корона',   weight: 1,  multiplier: 25000  },
+  { id: 'cherry',  emoji: '🍒', weight: 30, multiplier: 15     },
+  { id: 'lemon',   emoji: '🍋', weight: 26, multiplier: 30     },
+  { id: 'bell',    emoji: '🔔', weight: 17, multiplier: 75     },
+  { id: 'diamond', emoji: '💎', weight: 11, multiplier: 250    },
+  { id: 'seven',   emoji: '7️⃣', weight: 6,  multiplier: 1000   },
+  { id: 'star',    emoji: '⭐', weight: 3,  multiplier: 5000   },
+  { id: 'crown',   emoji: '👑', weight: 1,  multiplier: 25000  },
 ];
-const WILD    = { id: 'wild',    emoji: '🃏', name: 'Wild' };
-const SCATTER = { id: 'scatter', emoji: '🎁', name: 'Scatter' };
+const WILD    = { id: 'wild',    emoji: '🃏', multiplier: 0 };
+const SCATTER = { id: 'scatter', emoji: '🎁', multiplier: 0 };
 const TOTAL_WEIGHT = SYMBOLS.reduce((s, x) => s + x.weight, 0);
 
 const CFG = {
@@ -1553,16 +1545,10 @@ const CFG = {
   NICK_MAX: 16,
 };
 
-const SAVE_KEY = 'lucky_slots_classic_v1';
+const SAVE_KEY = 'lucky_slots_adaptive_v1';
 const SAVE_VERSION = 1;
 
-const AVATARS = [
-  '😎', '🤠', '👑', '🐯', '🦁', '🐺',
-  '🦊', '🐼', '🐸', '🐵', '🦄', '🐲',
-  '👽', '🤖', '👻', '💀', '🎃', '🤡',
-  '🃏', '💎', '⭐', '🔥', '⚡', '🌈',
-];
-
+const AVATARS = ['😎','🤠','👑','🐯','🦁','🐺','🦊','🐼','🐸','🐵','🦄','🐲','👽','🤖','👻','💀','🎃','🤡','🃏','💎','⭐','🔥','⚡','🌈'];
 const FRAMES = [
   { id: 'purple', color: '#a855f7', shadow: 'rgba(168,85,247,.6)' },
   { id: 'gold',   color: '#ffcb47', shadow: 'rgba(255,203,71,.6)' },
@@ -1585,14 +1571,8 @@ function fmt(n) {
 }
 function now() { return Date.now(); }
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-function vibrate(pattern) {
-  if ('vibrate' in navigator) {
-    try { navigator.vibrate(pattern); } catch (e) {}
-  }
-}
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
+function vibrate(pattern) { if ('vibrate' in navigator) { try { navigator.vibrate(pattern); } catch (e) {} } }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 const defaultState = {
   balance: CFG.START_BALANCE,
@@ -1691,9 +1671,9 @@ function renderProfileModal() {
   const frame = getFrame(state.frame);
   pc.innerHTML = `
     <div class="profile-hero">
-      <div class="avatar-big" style="border-color:${frame.color};box-shadow:0 0 40px ${frame.shadow}, inset 0 2px 0 rgba(255,255,255,.15)">${state.avatar}</div>
+      <div class="avatar-big" style="border-color:${frame.color};box-shadow:0 0 40px ${frame.shadow}">${state.avatar}</div>
       <div class="nickname-row" id="nickRow">
-        <div class="nickname-display" id="nickDisplay">${escapeHtml(state.nickname)}</div>
+        <div class="nickname-display">${escapeHtml(state.nickname)}</div>
         <button class="edit-nick-btn" id="editNickBtn" type="button">✏️ Изменить</button>
       </div>
       <div class="nick-edit-form" id="nickEditForm">
@@ -1731,24 +1711,18 @@ function renderProfileModal() {
   const nickSaveBtn = $('nickSaveBtn');
   const nickCancelBtn = $('nickCancelBtn');
   const nickHint = $('nickHint');
-  if (editBtn) {
-    editBtn.addEventListener('click', () => {
-      nickRow.style.display = 'none';
-      nickForm.classList.add('show');
-      setTimeout(() => { nickInput.focus(); nickInput.select(); }, 100);
-    });
-  }
-  if (nickCancelBtn) {
-    nickCancelBtn.addEventListener('click', () => {
-      nickRow.style.display = 'flex';
-      nickForm.classList.remove('show');
-      nickHint.classList.remove('error');
-      nickHint.textContent = `Максимум ${CFG.NICK_MAX} символов`;
-    });
-  }
-  if (nickSaveBtn) {
-    nickSaveBtn.addEventListener('click', () => saveNickname());
-  }
+  if (editBtn) editBtn.addEventListener('click', () => {
+    nickRow.style.display = 'none';
+    nickForm.classList.add('show');
+    setTimeout(() => { nickInput.focus(); nickInput.select(); }, 100);
+  });
+  if (nickCancelBtn) nickCancelBtn.addEventListener('click', () => {
+    nickRow.style.display = 'flex';
+    nickForm.classList.remove('show');
+    nickHint.classList.remove('error');
+    nickHint.textContent = `Максимум ${CFG.NICK_MAX} символов`;
+  });
+  if (nickSaveBtn) nickSaveBtn.addEventListener('click', () => saveNickname());
   if (nickInput) {
     nickInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); saveNickname(); }
@@ -1767,18 +1741,8 @@ function renderProfileModal() {
   }
   function saveNickname() {
     const val = nickInput.value.trim();
-    if (!val) {
-      nickHint.textContent = '❌ Ник не может быть пустым';
-      nickHint.classList.add('error');
-      nickInput.focus();
-      return;
-    }
-    if (val.length > CFG.NICK_MAX) {
-      nickHint.textContent = `❌ Слишком длинный: ${val.length} / ${CFG.NICK_MAX}`;
-      nickHint.classList.add('error');
-      nickInput.focus();
-      return;
-    }
+    if (!val) { nickHint.textContent = '❌ Ник не может быть пустым'; nickHint.classList.add('error'); nickInput.focus(); return; }
+    if (val.length > CFG.NICK_MAX) { nickHint.textContent = `❌ Слишком длинный: ${val.length} / ${CFG.NICK_MAX}`; nickHint.classList.add('error'); nickInput.focus(); return; }
     state.nickname = val;
     applyProfileToMini();
     scheduleAutosave();
@@ -1858,19 +1822,11 @@ function bindBetControls() {
 function renderPaytable() {
   const rows = [];
   rows.push(`<div class="pay-row" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);"><span style="font-size:12px;color:#22c55e;font-weight:800;">🎁 ${CFG.FREE_SPIN_COUNT} ФРИСПИНОВ ×${CFG.FREE_SPIN_MULT}</span></div>`);
-  rows.push(`<div class="pay-row" data-sym="🃏🃏🃏"><span class="pay-symbol">🃏🃏🃏</span><span class="pay-special">ДЖЕКПОТ 💰</span></div>`);
+  rows.push(`<div class="pay-row"><span class="pay-symbol">🃏🃏🃏</span><span class="pay-special">ДЖЕКПОТ 💰</span></div>`);
   SYMBOLS.slice().sort((a, b) => b.multiplier - a.multiplier).forEach(s => {
-    rows.push(`<div class="pay-row" data-sym="${s.emoji}"><span class="pay-symbol">${s.emoji}${s.emoji}${s.emoji}</span><span class="pay-mult">×${s.multiplier.toLocaleString('ru-RU')}</span></div>`);
+    rows.push(`<div class="pay-row"><span class="pay-symbol">${s.emoji}${s.emoji}${s.emoji}</span><span class="pay-mult">×${s.multiplier.toLocaleString('ru-RU')}</span></div>`);
   });
   dom.paytable.innerHTML = rows.join('');
-}
-function highlightPayRow(emoji) {
-  document.querySelectorAll('.pay-row').forEach(row => {
-    row.classList.toggle('hit', row.dataset.sym === emoji);
-  });
-  setTimeout(() => {
-    document.querySelectorAll('.pay-row').forEach(r => r.classList.remove('hit'));
-  }, 1500);
 }
 
 function randomSymbol() {
@@ -2020,7 +1976,6 @@ function resolveResult(result, isFree) {
     if (win.symbol.id === 'seven')   state.sevenCount++;
     updateBalance('win');
     cells.forEach(c => c.classList.add('win'));
-    highlightPayRow(win.symbol.emoji);
     if (multiplier >= 5000) {
       spawnParticles(30, ['⭐', '💎', '✨']);
       dom.machine.classList.add('shake');
@@ -2076,12 +2031,8 @@ function finishSpin(payout, displayMult, result, type, multiplier) {
     state.freeSpinAutoRunning = false;
     const won = state.freeSpinTotalWon;
     setTimeout(() => {
-      if (won > 0) {
-        showToast(`🎁 Фриспины завершены! Итого: +${fmt(won)}`);
-        spawnParticles(25, ['🎁', '✨', '💰']);
-      } else {
-        showToast('🎁 Фриспины завершены');
-      }
+      if (won > 0) { showToast(`🎁 Фриспины завершены! Итого: +${fmt(won)}`); spawnParticles(25, ['🎁', '✨', '💰']); }
+      else { showToast('🎁 Фриспины завершены'); }
     }, 600);
     state.freeSpinTotalWon = 0;
   }
@@ -2105,13 +2056,9 @@ function updateFsBadge() {
   if (state.freeSpins > 0) {
     dom.fsBadge.innerHTML = `🎁 ${state.freeSpins} ×${CFG.FREE_SPIN_MULT}`;
     dom.fsBadge.classList.add('show');
-  } else {
-    dom.fsBadge.classList.remove('show');
-  }
+  } else dom.fsBadge.classList.remove('show');
 }
-function updateFreeSpinsMini() {
-  if (dom.freeSpinsMini) dom.freeSpinsMini.textContent = state.freeSpins;
-}
+function updateFreeSpinsMini() { if (dom.freeSpinsMini) dom.freeSpinsMini.textContent = state.freeSpins; }
 
 function showResult(symbols, bet, multiplier, payout, type) {
   const isScatter = type === 'scatter';
@@ -2127,27 +2074,18 @@ function showResult(symbols, bet, multiplier, payout, type) {
   else if (isBigWin)  dom.resultTitle.textContent = '🏆 БОЛЬШОЙ ВЫИГРЫШ!';
   else if (isWin)     dom.resultTitle.textContent = 'ВЫИГРЫШ';
   else                dom.resultTitle.textContent = 'ПРОИГРЫШ';
-  dom.resultCard.classList.remove('win', 'lose', 'big-win', 'mega-win');
-  if (isJackpot || isMega) dom.resultCard.classList.add('win', 'mega-win');
+  dom.resultCard.classList.remove('win', 'lose', 'big-win');
+  if (isJackpot || isMega) dom.resultCard.classList.add('win', 'big-win');
   else if (isBigWin)       dom.resultCard.classList.add('win', 'big-win');
   else if (isWin || isFs)  dom.resultCard.classList.add('win');
   else                     dom.resultCard.classList.add('lose');
   const symEls = dom.resultSymbols.querySelectorAll('.result-sym');
   symEls.forEach((el, i) => { el.textContent = symbols[i] ? symbols[i].emoji : ''; });
   dom.resultBet.textContent = fmt(bet);
-  if (isScatter) {
-    dom.resultMult.textContent = '🎁 БОНУС';
-    dom.resultPayout.textContent = `+${CFG.FREE_SPIN_COUNT} FS`;
-  } else if (isJackpot) {
-    dom.resultMult.textContent = '×5000';
-    dom.resultPayout.textContent = `+${fmt(payout)}`;
-  } else if (isWin) {
-    dom.resultMult.textContent = `×${Math.round(multiplier).toLocaleString('ru-RU')}`;
-    dom.resultPayout.textContent = `+${fmt(payout)}`;
-  } else {
-    dom.resultMult.textContent = '—';
-    dom.resultPayout.textContent = `−${fmt(bet)}`;
-  }
+  if (isScatter) { dom.resultMult.textContent = '🎁 БОНУС'; dom.resultPayout.textContent = `+${CFG.FREE_SPIN_COUNT} FS`; }
+  else if (isJackpot) { dom.resultMult.textContent = '×5000'; dom.resultPayout.textContent = `+${fmt(payout)}`; }
+  else if (isWin) { dom.resultMult.textContent = `×${Math.round(multiplier).toLocaleString('ru-RU')}`; dom.resultPayout.textContent = `+${fmt(payout)}`; }
+  else { dom.resultMult.textContent = '—'; dom.resultPayout.textContent = `−${fmt(bet)}`; }
   dom.resultOverlay.classList.add('show');
   clearTimeout(resultTimer);
   const dur = (isJackpot || isMega) ? 3500 : (isScatter ? 2500 : 2000);
@@ -2161,14 +2099,12 @@ function showResult(symbols, bet, multiplier, payout, type) {
 function hideResult() { clearTimeout(resultTimer); dom.resultOverlay.classList.remove('show'); }
 
 function spawnParticles(count, emojis) {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
   for (let i = 0; i < count; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 200 + Math.random() * 400;
+    const angle = Math.random() * Math.PI * 2, dist = 200 + Math.random() * 400;
     p.style.left = cx + 'px';
     p.style.top = cy + 'px';
     p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
@@ -2181,18 +2117,15 @@ function spawnParticles(count, emojis) {
 }
 function spawnFirework() {
   const colors = ['#ff5c5c', '#ffcb47', '#22c55e', '#3b82f6', '#a855f7'];
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
   for (let i = 0; i < 60; i++) {
     const p = document.createElement('div');
     p.className = 'firework';
     const c = colors[Math.floor(Math.random() * colors.length)];
     p.style.background = c;
-    p.style.color = c;
     p.style.left = cx + 'px';
     p.style.top = cy + 'px';
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 100 + Math.random() * 500;
+    const angle = Math.random() * Math.PI * 2, dist = 100 + Math.random() * 500;
     p.style.setProperty('--fx', Math.cos(angle) * dist + 'px');
     p.style.setProperty('--fy', Math.sin(angle) * dist + 'px');
     document.body.appendChild(p);
@@ -2240,9 +2173,7 @@ function updateDailyBadge() {
     const dot = document.createElement('div');
     dot.className = 'badge-dot';
     btn.appendChild(dot);
-  } else if (!canClaimDaily() && existing) {
-    existing.remove();
-  }
+  } else if (!canClaimDaily() && existing) existing.remove();
 }
 function renderDailyModal() {
   const dc = $('dailyContent');
@@ -2282,10 +2213,7 @@ function renderDailyModal() {
       <div style="margin-top:8px;font-size:10.5px;">Каждый день награда растёт ×1.5.<br>Пропустишь 2 дня — стрик сбросится.</div>
     </div>
   `;
-  if (can) {
-    const btn = $('claimDailyBtn');
-    if (btn) btn.addEventListener('click', claimDailyReward);
-  }
+  if (can) { const btn = $('claimDailyBtn'); if (btn) btn.addEventListener('click', claimDailyReward); }
 }
 
 function renderStatsModal() {
@@ -2301,7 +2229,7 @@ function renderStatsModal() {
   const recent = state.recentResults.slice(-20);
   const maxPayout = Math.max(...recent.map(r => r.payout), 1);
   const chartHTML = recent.length > 0
-    ? `<div class="mini-chart">${recent.map(r => { const h = Math.max((r.payout / maxPayout) * 100, 6); return `<div class="mini-chart-bar ${r.payout > 0 ? 'win' : 'lose'}" style="height:${h}%" title="${r.payout > 0 ? '+' + fmt(r.payout) : '−' + fmt(r.bet)}"></div>`; }).join('')}</div>`
+    ? `<div class="mini-chart">${recent.map(r => { const h = Math.max((r.payout / maxPayout) * 100, 6); return `<div class="mini-chart-bar ${r.payout > 0 ? 'win' : 'lose'}" style="height:${h}%"></div>`; }).join('')}</div>`
     : '<div class="hist-empty">Недостаточно данных</div>';
   sc.innerHTML = `
     <div class="stats-section">
@@ -2360,7 +2288,7 @@ function renderStatsModal() {
     <div class="stats-section">
       <div class="stats-section-title">📈 Последние 20 спинов</div>
       ${chartHTML}
-      <div style="font-size:10.5px;color:var(--text-dim);text-align:center;margin-top:8px;">🟩 Победа &nbsp;·&nbsp; 🟥 Проигрыш</div>
+      <div style="font-size:10.5px;color:var(--text-dim);text-align:center;margin-top:8px;">🟩 Победа · 🟥 Проигрыш</div>
     </div>
   `;
 }
@@ -2376,15 +2304,9 @@ function saveGame() {
   if (t - lastSaveAttempt < 100) return;
   lastSaveAttempt = t;
   try {
-    const data = {
-      ...state, lastSaveTime: t, saveVersion: SAVE_VERSION,
-      spinning: false, spinLockTime: 0,
-      freeSpinAutoRunning: false, freeSpins: 0,
-      reels: null,
-      recentResults: state.recentResults.slice(-20),
-    };
+    const data = { ...state, lastSaveTime: t, saveVersion: SAVE_VERSION, spinning: false, spinLockTime: 0, freeSpinAutoRunning: false, freeSpins: 0, reels: null, recentResults: state.recentResults.slice(-20) };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  } catch (e) { console.warn('Save failed:', e); }
+  } catch (e) {}
 }
 function loadGame() {
   try {
@@ -2394,30 +2316,25 @@ function loadGame() {
     if (!data || typeof data !== 'object') return false;
     Object.keys(defaultState).forEach(k => {
       if (k in data && data[k] !== null && data[k] !== undefined) {
-        const expectedType = typeof defaultState[k];
-        const gotType = typeof data[k];
-        if (expectedType === gotType || (Array.isArray(defaultState[k]) && Array.isArray(data[k]))) {
-          state[k] = data[k];
-        }
+        const expectedType = typeof defaultState[k], gotType = typeof data[k];
+        if (expectedType === gotType || (Array.isArray(defaultState[k]) && Array.isArray(data[k]))) state[k] = data[k];
       }
     });
-    state.balance     = clamp(Number(state.balance) || CFG.START_BALANCE, 0, Number.MAX_SAFE_INTEGER);
-    state.jackpot     = clamp(Number(state.jackpot) || CFG.START_JACKPOT, 0, Number.MAX_SAFE_INTEGER);
-    state.bet         = clamp(Number(state.bet) || 1000, 1, Math.max(1, state.balance));
-    state.level       = clamp(Number(state.level) || 1, 1, 100000);
-    state.xp          = clamp(Number(state.xp) || 0, 0, Number.MAX_SAFE_INTEGER);
-    state.nickname    = String(state.nickname || 'Игрок').slice(0, CFG.NICK_MAX) || 'Игрок';
-    state.avatar      = AVATARS.includes(state.avatar) ? state.avatar : '😎';
-    state.frame       = FRAMES.some(f => f.id === state.frame) ? state.frame : 'purple';
+    state.balance = clamp(Number(state.balance) || CFG.START_BALANCE, 0, Number.MAX_SAFE_INTEGER);
+    state.jackpot = clamp(Number(state.jackpot) || CFG.START_JACKPOT, 0, Number.MAX_SAFE_INTEGER);
+    state.bet = clamp(Number(state.bet) || 1000, 1, Math.max(1, state.balance));
+    state.level = clamp(Number(state.level) || 1, 1, 100000);
+    state.xp = clamp(Number(state.xp) || 0, 0, Number.MAX_SAFE_INTEGER);
+    state.nickname = String(state.nickname || 'Игрок').slice(0, CFG.NICK_MAX) || 'Игрок';
+    state.avatar = AVATARS.includes(state.avatar) ? state.avatar : '😎';
+    state.frame = FRAMES.some(f => f.id === state.frame) ? state.frame : 'purple';
     state.spinning = false; state.spinLockTime = 0;
     state.freeSpins = 0; state.freeSpinAutoRunning = false;
     state.sessionStart = now(); state.sessionSpins = 0;
-    if (!state.reels || !state.reels[0] || !state.reels[0].emoji) {
-      state.reels = [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]];
-    }
+    if (!state.reels || !state.reels[0] || !state.reels[0].emoji) state.reels = [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]];
     if (!Array.isArray(state.recentResults)) state.recentResults = [];
     return true;
-  } catch (e) { console.warn('Load failed:', e); return false; }
+  } catch (e) { return false; }
 }
 
 function bindButtons() {
@@ -2431,9 +2348,20 @@ function bindButtons() {
   });
 
   $('btnDaily').addEventListener('click', () => { renderDailyModal(); $('dailyModal').classList.add('show'); });
-  $('btnStats').addEventListener('click', () => { renderStatsModal(); $('statsModal').classList.add('show'); });
-  $('btnTable').addEventListener('click', () => { $('tableModal').classList.add('show'); });
   $('btnProfile').addEventListener('click', () => { renderProfileModal(); $('profileModal').classList.add('show'); });
+
+  // Навигация
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nav = btn.dataset.nav;
+      if (nav === 'game') {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      if (nav === 'table') { $('tableModal').classList.add('show'); }
+      if (nav === 'stats') { renderStatsModal(); $('statsModal').classList.add('show'); }
+    });
+  });
 
   document.querySelectorAll('[data-close]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2478,9 +2406,7 @@ function bindButtons() {
     const touchEndY = e.changedTouches[0].clientY;
     const diff = touchStartY - touchEndY;
     const dt = now() - touchStartTime;
-    if (diff > 60 && dt < 500 && !state.spinning && !document.querySelector('.modal-overlay.show')) {
-      spin();
-    }
+    if (diff > 60 && dt < 500 && !state.spinning && !document.querySelector('.modal-overlay.show')) spin();
   }, { passive: true });
 
   setInterval(saveGame, CFG.SAVE_INTERVAL);
@@ -2503,9 +2429,7 @@ function init() {
   updateFreeSpinsMini();
   updateDailyBadge();
   applyProfileToMini();
-  if (!state.reels || !state.reels[0] || !state.reels[0].emoji) {
-    state.reels = [randomSymbol(), randomSymbol(), randomSymbol()];
-  }
+  if (!state.reels || !state.reels[0] || !state.reels[0].emoji) state.reels = [randomSymbol(), randomSymbol(), randomSymbol()];
   renderReels();
   $('btnTurbo').classList.toggle('active', state.turbo);
 
@@ -2513,11 +2437,8 @@ function init() {
   else setTimeout(() => showToast('🎰 Добро пожаловать!'), 400);
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 </script>
 </body>
 </html>
