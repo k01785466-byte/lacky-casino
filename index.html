@@ -2,934 +2,142 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Hamster Tap</title>
-
-<!-- ИКОНКА САЙТА -->
-<link rel="icon" type="image/png" href="hamster.png">
-<link rel="apple-touch-icon" href="hamster.png">
-<link rel="shortcut icon" href="hamster.png">
-
-<!-- PWA МАНИФЕСТ -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1c1c1e">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мой ИИ Сайт</title>
+<!-- Подключаем библиотеку для бесплатного ИИ -->
+<script src="https://js.puter.com/v2/"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overflow: hidden; }
-  
+  * { box-sizing: border-box; }
   body {
-    font-family: 'Roboto', sans-serif;
-    background: #2c2c2c;
-    display: flex; justify-content: center; align-items: center;
-    color: #fff;
-  }
-
-  #app {
-    width: 100%; max-width: 420px; height: 100vh; max-height: 900px;
-    background: #1c1c1e;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-    border-radius: 20px;
-  }
-
-  /* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
-  #topBar {
-    position: absolute;
-    top: 15px; left: 0; right: 0;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 15px; z-index: 10;
-  }
-  
-  .profile-mini {
-    display: flex; align-items: center; gap: 8px; cursor: pointer;
-    background: #2a2a2e; padding: 6px 12px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .profile-mini img {
-    width: 24px; height: 24px; border-radius: 50%; object-fit: cover;
-  }
-  .profile-mini span { font-weight: 700; font-size: 14px; }
-
-  .top-energy-box { 
-    display: flex; align-items: center; gap: 6px; 
-    font-size: 14px; font-weight: 900; 
-    background: #2a2a2e; padding: 8px 14px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  }
-  .top-energy-box .lightning { font-size: 18px; filter: drop-shadow(0 0 8px #ffd700); }
-
-  #profitDisplay {
-    position: absolute; top: 65px; left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: #55ffff; font-weight: 700;
-    background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px;
-    z-index: 10; display: none;
-  }
-
-  /* ===== ХОМЯК И МОНЕТЫ ===== */
-  #hamsterArea {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 100%; gap: 15px;
-    position: relative;
-  }
-  
-  .level-container {
-    width: 100%; max-width: 280px;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    margin-bottom: 10px; margin-top: 20px;
-  }
-  .level-text { font-size: 14px; color: #ffd700; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-  .progress-bg { width: 100%; height: 8px; background: #2a2a2e; border-radius: 4px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
-  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffd700, #ff8c00); border-radius: 4px; transition: width 0.3s; }
-
-  .coin-counter {
-    display: flex; align-items: center; gap: 15px;
-    font-size: 44px; font-weight: 900; z-index: 2;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  }
-  
-  .coin-icon {
-    width: 54px; height: 54px; border-radius: 50%;
-    background: linear-gradient(135deg, #ffe066 0%, #ffb300 50%, #ff8c00 100%);
-    border: 3px solid #fff4b3;
-    box-shadow: 0 6px 0 #8a5a00, 0 10px 20px rgba(0,0,0,0.6), inset -4px -4px 10px rgba(0,0,0,0.3), inset 4px 4px 10px rgba(255,255,255,0.6);
+    margin: 0; height: 100vh;
     display: flex; align-items: center; justify-content: center;
-    font-size: 28px; font-weight: 900; color: #7a4a00;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.6);
-    flex-shrink: 0; transform: perspective(100px) rotateX(10deg);
+    background: linear-gradient(135deg, #1e1e2f, #2d2b55);
+    font-family: 'Segoe UI', Arial, sans-serif;
   }
-  .coin-icon::after { content: '$'; font-family: 'Roboto', sans-serif; }
-
-  .hamster-circle {
-    width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle at 50% 40%, #1b2b5e 0%, #0a0f1c 90%);
-    border: 4px solid #2b3d7a;
-    box-shadow: 0 0 60px rgba(43, 61, 122, 0.6), inset 0 0 40px rgba(0,0,0,0.9);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: transform 0.05s; 
-    position: relative; z-index: 1; overflow: hidden;
-    margin-bottom: 20px;
+  .chat {
+    width: 100%; max-width: 600px; height: 85vh;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; overflow: hidden;
   }
-  .hamster-circle:active { transform: scale(0.95); }
-
-  .hamster-image {
-    width: 85%; height: 85%; object-fit: contain; pointer-events: none;
-    transform: translateY(15px); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
+  .header {
+    background: #2d2b55; color: #fff; padding: 20px;
+    font-size: 20px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
   }
-
-  /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
-  .bottom-bar {
-    position: absolute; bottom: 20px;
-    width: calc(100% - 30px); max-width: 390px;
-    background: rgba(42, 42, 46, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 10px 15px;
-    display: flex; justify-content: space-around; align-items: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-    z-index: 10;
+  .header .dot { width: 12px; height: 12px; border-radius: 50%; background: #4ade80; }
+  .messages {
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 16px;
+    background: #f9f9fc;
   }
-  
-  .icon-btn {
-    width: 46px; height: 46px;
-    background: #2a2a2e;
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; cursor: pointer; transition: all 0.2s;
-    padding: 0; position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  .msg {
+    max-width: 85%; padding: 14px 18px; border-radius: 20px;
+    font-size: 16px; line-height: 1.5; word-wrap: break-word;
+    white-space: pre-wrap;
   }
-  .icon-btn:active { transform: scale(0.9); }
-  
-  .icon-btn.upg { background: linear-gradient(135deg, #9b59b6, #6c3483); border: none; opacity: 0.6; transition: all 0.3s; }
-  .icon-btn.upg.affordable {
-    opacity: 1;
-    animation: pulse-green 2s infinite;
-    box-shadow: 0 0 20px #55ff55;
+  .bot {
+    align-self: flex-start; background: #fff; color: #222;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
-  @keyframes pulse-green {
-    0% { box-shadow: 0 0 0 0 rgba(85, 255, 85, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(85, 255, 85, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(85, 255, 85, 0); }
+  .user {
+    align-self: flex-end; background: #2d2b55; color: #fff;
+    border-bottom-right-radius: 4px;
   }
-
-  .icon-btn.biz { background: linear-gradient(135deg, #2980b9, #2c3e50); border: none; }
-  .icon-btn.cipher { background: linear-gradient(135deg, #d35400, #e67e22); border: none; }
-  
-  .icon-btn.reward { background: #2a2a2e; border: 1px solid rgba(255,255,255,0.1); }
-  .icon-btn.reward.has-reward {
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    border: none; animation: pulse-gold 2s infinite;
+  .input-row {
+    display: flex; padding: 16px; gap: 10px;
+    background: #fff; border-top: 1px solid #e5e7eb;
   }
-  @keyframes pulse-gold {
-    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+  input[type=text] {
+    flex: 1; padding: 14px 20px; border: 1px solid #e5e7eb;
+    border-radius: 30px; outline: none; font-size: 16px;
   }
-
-  .boost-btn.active {
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    border: none; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  input[type=text]:focus { border-color: #2d2b55; }
+  button {
+    padding: 0 24px; border: none; border-radius: 30px;
+    background: #2d2b55; color: #fff; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
   }
-  .boost-btn .timer {
-    font-size: 9px; font-weight: 700; color: #ffd700;
-    position: absolute; top: -10px; background: #1c1c1e; padding: 2px 6px; border-radius: 10px;
-    pointer-events: none;
-  }
-
-  /* ===== МОДАЛКИ ===== */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    display: none; justify-content: center; align-items: flex-end;
-    z-index: 1000; backdrop-filter: blur(5px);
-  }
-  .modal-overlay.show { display: flex; }
-  
-  .modal-content {
-    background: #1c1c1e; border-radius: 20px 20px 0 0;
-    padding: 20px; width: 100%; max-width: 420px;
-    max-height: 80vh; display: flex; flex-direction: column;
-    animation: slideUp 0.3s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  
-  .modal-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px; border-bottom: 1px solid #2a2a2e; padding-bottom: 10px;
-  }
-  .modal-header h2 { font-size: 20px; }
-  .close-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
-
-  .action-btn-full {
-    width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 900; font-size: 18px;
-    cursor: pointer; transition: transform 0.1s; margin-top: 15px;
-    background: linear-gradient(135deg, #55ff55, #00aa00);
-    color: #1c1c1e;
-  }
-  .action-btn-full:active { transform: scale(0.95); }
-  .action-btn-full.disabled { background: #333 !important; color: #666 !important; cursor: not-allowed; }
-
-  .upgrade-info { text-align: center; display: flex; flex-direction: column; gap: 10px; }
-  .upgrade-level { font-size: 24px; color: #ffd700; font-weight: 900; }
-  .upgrade-desc { font-size: 14px; color: #aaa; }
-  .upgrade-cost { font-size: 16px; color: #55ffff; font-weight: 700; margin-top: 10px; }
-
-  .daily-container { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
-  .daily-streak-box {
-    background: #2a2a2e; padding: 15px 30px; border-radius: 12px;
-    display: flex; flex-direction: column; gap: 5px;
-  }
-  .daily-streak-box span { font-size: 14px; color: #aaa; }
-  .daily-streak-box b { font-size: 24px; color: #ff8c00; }
-  .daily-reward-text { font-size: 18px; font-weight: 700; color: #ffd700; }
-
-  .profile-edit { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-  .avatar-container { position: relative; width: 100px; height: 100px; }
-  .avatar-preview { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700; background: #2a2a2e; }
-  .avatar-edit-btn {
-    position: absolute; bottom: 0; right: 0;
-    background: #ffd700; width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px; color: #1c1c1e; border: 2px solid #1c1c1e;
-  }
-  .name-input {
-    width: 100%; padding: 12px; background: #2a2a2e; border: 1px solid #3a3a3e;
-    border-radius: 10px; color: #fff; font-size: 16px; outline: none; text-align: center;
-  }
-  .save-btn {
-    width: 100%; padding: 14px; background: linear-gradient(135deg, #55aa00, #337700);
-    border: none; border-radius: 12px; color: #fff; font-weight: 900; font-size: 16px; cursor: pointer;
-  }
-
-  .shop-list { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
-  .shop-list::-webkit-scrollbar { width: 4px; }
-  .shop-list::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 4px; }
-  
-  .shop-card {
-    display: flex; align-items: center; gap: 12px;
-    background: #2a2a2e; padding: 12px; border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.05);
-  }
-  .shop-card .icon { font-size: 28px; }
-  .shop-card .info { flex: 1; }
-  .shop-card .title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-  .shop-card .desc { font-size: 11px; color: #55ffff; }
-  .shop-card .cost { font-size: 13px; color: #ffd700; font-weight: 700; margin-top: 4px; }
-  
-  .buy-btn {
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    color: #1c1c1e; border: none; border-radius: 8px;
-    padding: 8px 12px; font-weight: 900; cursor: pointer; font-size: 12px;
-  }
-  .buy-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
-
-  .cipher-container { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
-  .cipher-hint { font-size: 32px; margin-bottom: 10px; letter-spacing: 5px; }
-  .cipher-input {
-    width: 100%; padding: 14px; background: #2a2a2e; border: 2px solid #d35400;
-    border-radius: 10px; color: #fff; font-size: 18px; outline: none; text-align: center;
-    text-transform: uppercase; letter-spacing: 2px;
-  }
-  .cipher-input:focus { border-color: #ff8c00; }
-  .cipher-status { font-size: 14px; font-weight: 700; color: #ffd700; min-height: 20px; }
-
-  .float-coin {
-    position: fixed; pointer-events: none; 
-    border-radius: 20px; padding: 6px 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-    z-index: 100; animation: floatUp 0.8s forwards;
-    display: flex; align-items: center; justify-content: center;
-    color: #1c1c1e; font-weight: 900; font-family: 'Roboto', sans-serif;
-  }
-  @keyframes floatUp {
-    0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
-    20% { transform: translate(-50%, -20px) scale(1.3); opacity: 1; }
-    100% { transform: translate(-50%, -120px) scale(1); opacity: 0; }
-  }
-
-  @media (max-width: 480px) {
-    body { background: #1c1c1e; }
-    #app { max-width: 100%; height: 100vh; box-shadow: none; border-radius: 0; }
-    .hamster-circle { width: 260px; height: 260px; }
-    .hamster-image { width: 90%; height: 90%; }
-    .coin-counter { font-size: 36px; }
-    .coin-icon { width: 44px; height: 44px; font-size: 22px; }
-    .bottom-bar { width: calc(100% - 20px); padding: 8px 10px; }
-    .icon-btn { width: 40px; height: 40px; font-size: 18px; }
-    .modal-content { max-height: 90vh; }
-  }
+  button:hover { background: #1e1c3a; }
+  button:disabled { background: #aaa; cursor: not-allowed; }
+  .typing { font-style: italic; color: #888; }
 </style>
 </head>
 <body>
-
-<div id="app">
-  
-  <div id="topBar">
-    <div class="profile-mini" onclick="openProfile()">
-      <img src="hamster.png" alt="avatar" id="miniAvatar">
-      <span id="miniName">CEO</span>
-    </div>
-    
-    <div class="top-energy-box">
-      <span class="lightning">⚡</span>
-      <span id="energyText">7000</span> / 7000
-    </div>
+<div class="chat">
+  <div class="header"><span class="dot"></span> Мой ИИ Ассистент</div>
+  <div class="messages" id="messages">
+    <div class="msg bot">Привет! Я нейросеть, работающая прямо на этом сайте. Спрашивай что угодно! 🧠✨</div>
   </div>
-
-  <div id="profitDisplay">💼 Доход: +0/сек</div>
-
-  <div id="hamsterArea">
-    <div class="level-container">
-      <div class="level-text">Уровень <span id="levelDisplay">1</span></div>
-      <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-
-    <div class="coin-counter">
-      <div class="coin-icon"></div>
-      <span id="coinsDisplay">0</span>
-    </div>
-    
-    <div class="hamster-circle" onclick="tapHamster(event)">
-      <img src="hamster.png" alt="Hamster" class="hamster-image">
-    </div>
-  </div>
-
-  <div class="bottom-bar">
-    <div class="icon-btn upg" id="upgradeBtn" onclick="openUpgrade()">⬆️</div>
-    <div class="icon-btn biz" onclick="openShop()">💼</div>
-    <div class="icon-btn cipher" onclick="openCipher()">🔐</div>
-    <div class="icon-btn reward" id="dailyBtn" onclick="openDaily()">🎁</div>
-    <div class="icon-btn boost-btn" id="boostBtn" onclick="activateBoost()">
-      🚀<div class="timer" id="boostTimer" style="display:none;">30s</div>
-    </div>
-  </div>
-
-</div>
-
-<!-- МОДАЛКА ПРОФИЛЯ -->
-<div class="modal-overlay" id="profileModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>👤 Профиль</h2>
-      <button class="close-btn" onclick="closeModal('profileModal')">×</button>
-    </div>
-    <div class="profile-edit">
-      <div class="avatar-container">
-        <img src="hamster.png" alt="avatar" class="avatar-preview" id="avatarPreview">
-        <div class="avatar-edit-btn" onclick="document.getElementById('avatarInput').click()">📷</div>
-        <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="loadAvatar(event)">
-      </div>
-      <input type="text" class="name-input" id="nameInput" placeholder="Ваше имя" maxlength="15">
-      <button class="save-btn" onclick="saveProfile()">Сохранить</button>
-    </div>
-  </div>
-</div>
-
-<!-- МОДАЛКА УЛУЧШЕНИЙ -->
-<div class="modal-overlay" id="upgradeModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>⬆️ Улучшение клика</h2>
-      <button class="close-btn" onclick="closeModal('upgradeModal')">×</button>
-    </div>
-    <div class="upgrade-info">
-      <div class="upgrade-level" id="upgModalLevel">Мультитап Lv.1</div>
-      <div class="upgrade-desc">Увеличивает монеты за один клик по хомяку.</div>
-      <div class="upgrade-cost" id="upgModalCost">Цена: 500 🪙</div>
-      <button class="action-btn-full" id="upgModalBtn" onclick="buyMultitap()">Купить</button>
-    </div>
-  </div>
-</div>
-
-<!-- МОДАЛКА БИЗНЕСА -->
-<div class="modal-overlay" id="shopModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>💼 Бизнесы (Доход в сек.)</h2>
-      <button class="close-btn" onclick="closeModal('shopModal')">×</button>
-    </div>
-    <div class="shop-list" id="shopList"></div>
-  </div>
-</div>
-
-<!-- МОДАЛКА ШИФРА -->
-<div class="modal-overlay" id="cipherModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>🔐 Ежедневный шифр</h2>
-      <button class="close-btn" onclick="closeModal('cipherModal')">×</button>
-    </div>
-    <div class="cipher-container">
-      <p style="font-size:14px; color:#aaa;">Разгадай зашифрованное слово и получи <b style="color:#ffd700;">1 000 000 🪙</b></p>
-      <div class="cipher-hint" id="cipherHint">🐹🐹🐹</div>
-      <input type="text" class="cipher-input" id="cipherInput" placeholder="Введите слово">
-      <button class="action-btn-full" onclick="checkCipher()">Проверить</button>
-      <div class="cipher-status" id="cipherStatus"></div>
-    </div>
-  </div>
-</div>
-
-<!-- МОДАЛКА ЕЖЕДНЕВНОЙ НАГРАДЫ -->
-<div class="modal-overlay" id="dailyModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>🎁 Ежедневный бонус</h2>
-      <button class="close-btn" onclick="closeModal('dailyModal')">×</button>
-    </div>
-    <div class="daily-container">
-      <p style="font-size:14px; color:#aaa;">Заходи каждый день, чтобы увеличить награду!</p>
-      <div class="daily-streak-box">
-        <span>Твой стрик:</span>
-        <b id="modalStreak">0 дней</b>
-      </div>
-      <div class="daily-reward-text" id="modalRewardText">Награда: +500 🪙</div>
-      <button class="action-btn-full" id="claimDailyBtn" onclick="claimDaily()">Забрать</button>
-    </div>
+  <div class="input-row">
+    <input type="text" id="input" placeholder="Напиши вопрос..." autocomplete="off">
+    <button id="send" type="button" onclick="sendMessage()">➤</button>
   </div>
 </div>
 
 <script>
-  // --- РЕГИСТРАЦИЯ PWA (Service Worker) ---
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('SW registered'))
-        .catch(err => console.log('SW error', err));
-    });
-  }
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('send');
 
-  // --- СОСТОЯНИЕ ---
-  let coins = 0;
-  let energy = 7000;
-  const maxEnergy = 7000;
-  let level = 1;
+// История для памяти бота
+let chatHistory = [];
+
+function addMessage(text, who) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  // Добавляем сообщение пользователя
+  addMessage(text, 'user');
+  inputEl.value = '';
+  sendBtn.disabled = true;
   
-  let playerName = 'CEO';
-  let playerAvatar = 'hamster.png';
-  
-  let dailyStreak = 0;
-  let lastDailyDate = null;
-  
-  let multitapLevel = 1;
-  let boostActive = false;
-  let boostTimeLeft = 0;
-  let boostInterval = null;
-  let lastBoostTime = 0;
+  // Показываем, что бот "думает"
+  const typing = addMessage("Думает...", 'bot typing');
 
-  const BIZ_TYPES = [
-    { id: 'b1', name: 'Маркетинг', icon: '📢', baseCost: 1000, income: 5 },
-    { id: 'b2', name: 'Рынки', icon: '📈', baseCost: 5000, income: 25 },
-    { id: 'b3', name: 'PR & Команда', icon: '👥', baseCost: 20000, income: 100 },
-    { id: 'b4', name: 'Юристы', icon: '⚖️', baseCost: 80000, income: 400 },
-    { id: 'b5', name: 'Биржа', icon: '🏦', baseCost: 300000, income: 1500 },
-    { id: 'b6', name: 'Web3', icon: '🌐', baseCost: 1000000, income: 6000 },
-  ];
-  let businessLevels = {};
+  chatHistory.push({ role: "user", content: text });
 
-  const CIPHERS = [
-    { hint: '🐹💼', answer: 'ХОМЯК' },
-    { hint: '🪙🪙🪙', answer: 'МОНЕТЫ' },
-    { hint: '🏦📈', answer: 'БИРЖА' },
-    { hint: '🚀🌕', answer: 'ЛУНА' },
-    { hint: '🐹👑', answer: 'КОРОЛЬ' },
-    { hint: '💎🙌', answer: 'АЛМАЗ' },
-    { hint: '🎮💰', answer: 'ИГРА' },
-  ];
-  let currentCipher = null;
-  let lastCipherDate = null;
+  try {
+    // Отправляем запрос в Puter.js
+    const response = await puter.ai.chat(chatHistory);
 
-  // --- ЗАГРУЗКА ---
-  function loadGame() {
-    const save = localStorage.getItem('hamster_game_save');
-    if (save) {
-      const data = JSON.parse(save);
-      coins = data.coins || 0;
-      level = data.level || 1;
-      energy = data.energy || 7000;
-      dailyStreak = data.dailyStreak || 0;
-      lastDailyDate = data.lastDailyDate || null;
-      multitapLevel = data.multitapLevel || 1;
-      lastBoostTime = data.lastBoostTime || 0;
-      playerName = data.playerName || 'CEO';
-      playerAvatar = data.playerAvatar || 'hamster.png';
-      businessLevels = data.businessLevels || {};
-      lastCipherDate = data.lastCipherDate || null;
-    }
+    // Убираем надпись "Думает..."
+    typing.remove();
     
-    document.getElementById('miniName').textContent = playerName;
-    document.getElementById('miniAvatar').src = playerAvatar;
-    document.getElementById('avatarPreview').src = playerAvatar;
-    document.getElementById('nameInput').value = playerName;
-
-    checkDailyStatus();
-    checkBoostCooldown();
-    initCipher();
-    updateUI();
-  }
-
-  // --- ПРОФИЛЬ ---
-  function openProfile() { document.getElementById('profileModal').classList.add('show'); }
-
-  function loadAvatar(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64 = e.target.result;
-      document.getElementById('avatarPreview').src = base64;
-      playerAvatar = base64;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function saveProfile() {
-    const newName = document.getElementById('nameInput').value.trim();
-    if (newName) {
-      playerName = newName;
-      document.getElementById('miniName').textContent = playerName;
-    }
-    document.getElementById('miniAvatar').src = playerAvatar;
-    saveGame();
-    closeModal('profileModal');
-    showFloatText('ПРОФИЛЬ ОБНОВЛЁН!', '#55ff55', 16);
-  }
-
-  // --- УРОВНИ ---
-  function getLevelCost(lvl) { return Math.floor(100 * Math.pow(1.5, lvl - 1)); }
-
-  function levelUp() {
-    level++;
-    showFloatText('НОВЫЙ УРОВЕНЬ!', '#ffd700', 18);
-    updateUI();
-    saveGame();
-  }
-
-  // --- УЛУЧШЕНИЯ ---
-  function openUpgrade() {
-    updateUpgradeModalUI();
-    document.getElementById('upgradeModal').classList.add('show');
-  }
-
-  function updateUpgradeModalUI() {
-    const cost = Math.floor(500 * Math.pow(1.05, multitapLevel - 1));
-    const canAfford = coins >= cost;
-
-    document.getElementById('upgModalLevel').textContent = `Мультитап Lv.${multitapLevel}`;
-    document.getElementById('upgModalCost').textContent = `Цена: ${cost.toLocaleString('en-US')} 🪙`;
-    
-    const btn = document.getElementById('upgModalBtn');
-    if (canAfford) {
-      btn.disabled = false;
-      btn.textContent = 'Купить';
-      btn.classList.remove('disabled');
+    // Проверяем, что ответ пришел и он не пустой
+    if (response && response.message && response.message.content) {
+      const botReply = response.message.content;
+      addMessage(botReply, 'bot');
+      chatHistory.push({ role: "assistant", content: botReply });
     } else {
-      btn.disabled = true;
-      btn.textContent = 'Мало монет';
-      btn.classList.add('disabled');
-    }
-  }
-
-  function buyMultitap() {
-    const cost = Math.floor(500 * Math.pow(1.05, multitapLevel - 1));
-    if (coins >= cost) {
-      coins -= cost;
-      multitapLevel++;
-      updateUI();
-      saveGame();
-      showFloatText('УЛУЧШЕНО!', '#55ff55', 16);
-      updateUpgradeModalUI();
-    }
-  }
-
-  // --- БИЗНЕС ---
-  function openShop() {
-    document.getElementById('shopModal').classList.add('show');
-    renderShop();
-  }
-
-  function renderShop() {
-    const list = document.getElementById('shopList');
-    list.innerHTML = '';
-    
-    BIZ_TYPES.forEach(biz => {
-      const lvl = businessLevels[biz.id] || 0;
-      
-      if (lvl >= 500) {
-        list.innerHTML += `
-          <div class="shop-card" style="justify-content:center;">
-            <div class="icon">🏆</div>
-            <div class="info" style="text-align:center;">
-              <div class="title" style="color:#ffd700;">МАКСИМУМ (500)</div>
-              <div class="desc">${biz.name}</div>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const cost = Math.floor(biz.baseCost * Math.pow(1.03, lvl));
-      const totalIncome = biz.income * (lvl + 1);
-      
-      list.innerHTML += `
-        <div class="shop-card">
-          <div class="icon">${biz.icon}</div>
-          <div class="info">
-            <div class="title">${biz.name} <span style="color:#ffd700; font-size:12px;">Lv.${lvl}</span></div>
-            <div class="desc">+${biz.income} в сек. (Всего: +${totalIncome}/сек)</div>
-            <div class="cost">${cost.toLocaleString('en-US')} 🪙</div>
-          </div>
-          <button class="buy-btn" ${coins < cost ? 'disabled' : ''} onclick="buyBusiness('${biz.id}')">Купить</button>
-        </div>
-      `;
-    });
-  }
-
-  function buyBusiness(id) {
-    const biz = BIZ_TYPES.find(b => b.id === id);
-    const lvl = businessLevels[id] || 0;
-    if (lvl >= 500) return;
-
-    const cost = Math.floor(biz.baseCost * Math.pow(1.03, lvl));
-    if (coins >= cost) {
-      coins -= cost;
-      businessLevels[id] = lvl + 1;
-      updateUI();
-      renderShop();
-      saveGame();
-      showFloatText('КУПЛЕНО!', '#55ff55', 16);
-    }
-  }
-
-  function getPassiveIncome() {
-    let total = 0;
-    BIZ_TYPES.forEach(biz => {
-      const lvl = businessLevels[biz.id] || 0;
-      total += biz.income * lvl;
-    });
-    return total;
-  }
-
-  setInterval(() => {
-    const income = getPassiveIncome();
-    if (income > 0) {
-      coins += income;
-      updateUI();
-      saveGame();
-    }
-  }, 1000);
-
-  // --- ШИФР ---
-  function initCipher() {
-    const today = new Date().toDateString();
-    const btn = document.querySelector('#cipherModal .action-btn-full');
-    
-    if (lastCipherDate === today) {
-      document.getElementById('cipherStatus').textContent = '✅ Шифр на сегодня разгадан!';
-      document.getElementById('cipherInput').disabled = true;
-      btn.disabled = true;
-      btn.classList.add('disabled');
-    } else {
-      const seed = today.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-      currentCipher = CIPHERS[seed % CIPHERS.length];
-      document.getElementById('cipherHint').textContent = currentCipher.hint;
-      document.getElementById('cipherStatus').textContent = '';
-      document.getElementById('cipherInput').disabled = false;
-      document.getElementById('cipherInput').value = '';
-      btn.disabled = false;
-      btn.classList.remove('disabled');
-    }
-  }
-
-  function openCipher() {
-    document.getElementById('cipherModal').classList.add('show');
-    initCipher();
-  }
-
-  function checkCipher() {
-    const input = document.getElementById('cipherInput').value.trim().toUpperCase();
-    const status = document.getElementById('cipherStatus');
-    if (!currentCipher) return;
-
-    if (input === currentCipher.answer) {
-      coins += 1000000;
-      lastCipherDate = new Date().toDateString();
-      updateUI();
-      saveGame();
-      initCipher();
-      status.textContent = '🎉 ВЕРНО! +1 000 000 монет!';
-      status.style.color = '#55ff55';
-      showFloatText('+1 000 000!', '#ffd700', 20);
-    } else {
-      status.textContent = '❌ Неверно, попробуй еще раз';
-      status.style.color = '#ff5555';
-    }
-  }
-
-  // --- ЕЖЕДНЕВКА ---
-  function checkDailyStatus() {
-    const today = new Date().toDateString();
-    const btn = document.getElementById('dailyBtn');
-    
-    if (lastDailyDate === today) {
-      btn.classList.remove('has-reward');
-      btn.innerHTML = '✅';
-    } else {
-      btn.classList.add('has-reward');
-      btn.innerHTML = '🎁';
-    }
-  }
-
-  function openDaily() {
-    updateDailyModalUI(); 
-    document.getElementById('dailyModal').classList.add('show');
-  }
-
-  function updateDailyModalUI() {
-    const today = new Date().toDateString();
-    const btn = document.getElementById('claimDailyBtn');
-    const rewardText = document.getElementById('modalRewardText');
-    
-    document.getElementById('modalStreak').textContent = dailyStreak + ' дней';
-
-    if (lastDailyDate === today) {
-      btn.disabled = true;
-      btn.textContent = 'Уже получено';
-      btn.classList.add('disabled');
-      rewardText.style.display = 'none';
-    } else {
-      btn.disabled = false;
-      btn.textContent = 'Забрать';
-      btn.classList.remove('disabled');
-      rewardText.style.display = 'block';
-      rewardText.textContent = `Награда: +${(dailyStreak + 1) * 500} 🪙`;
-    }
-  }
-
-  function claimDaily() {
-    const today = new Date().toDateString();
-    if (lastDailyDate === today) return;
-
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    if (lastDailyDate === yesterday.toDateString()) dailyStreak++;
-    else dailyStreak = 1;
-
-    const reward = dailyStreak * 500;
-    coins += reward;
-    lastDailyDate = today;
-
-    updateUI();
-    saveGame();
-    checkDailyStatus();
-    updateDailyModalUI();
-    showFloatText(`+${reward} МОНЕТ!`, '#ffd700', 18);
-  }
-
-  // --- БУСТ ---
-  function activateBoost() {
-    const now = Date.now();
-    if (boostActive) return;
-    if (now < lastBoostTime) {
-      showFloatText('ЖДИТЕ!', '#ff5555', 14);
-      return;
+      throw new Error("Пустой ответ от нейросети.");
     }
 
-    boostActive = true;
-    boostTimeLeft = 30;
-    const btn = document.getElementById('boostBtn');
-    btn.classList.add('active');
-    document.getElementById('boostTimer').style.display = 'block';
-    
-    boostInterval = setInterval(() => {
-      boostTimeLeft--;
-      document.getElementById('boostTimer').textContent = boostTimeLeft + 's';
-      if (boostTimeLeft <= 0) endBoost();
-    }, 1000);
+  } catch (error) {
+    typing.remove();
+    // Если произошла ошибка, выводим её
+    addMessage("⚠️ Ошибка: " + (error.message || "не удалось получить ответ. Попробуй отключить VPN или блокировщик рекламы."), 'bot');
+  } finally {
+    // Включаем кнопку обратно
+    sendBtn.disabled = false;
+    inputEl.focus();
   }
+}
 
-  function endBoost() {
-    boostActive = false;
-    clearInterval(boostInterval);
-    lastBoostTime = Date.now() + 2 * 60 * 60 * 1000;
-    document.getElementById('boostBtn').classList.remove('active');
-    document.getElementById('boostTimer').style.display = 'none';
-    checkBoostCooldown();
-    saveGame();
-  }
-
-  function checkBoostCooldown() {
-    const now = Date.now();
-    const btn = document.getElementById('boostBtn');
-    const timer = document.getElementById('boostTimer');
-    
-    if (now < lastBoostTime) {
-      btn.style.opacity = '0.5';
-      btn.style.pointerEvents = 'none';
-      timer.style.display = 'block';
-      
-      if (window.cooldownInterval) clearInterval(window.cooldownInterval);
-      window.cooldownInterval = setInterval(() => {
-        const left = Math.ceil((lastBoostTime - Date.now()) / 1000);
-        if (left <= 0) {
-          btn.style.opacity = '1';
-          btn.style.pointerEvents = 'auto';
-          timer.style.display = 'none';
-          clearInterval(window.cooldownInterval);
-        } else {
-          const h = Math.floor(left / 3600);
-          const m = Math.floor((left % 3600) / 60);
-          timer.textContent = `${h}ч ${m}м`;
-        }
-      }, 1000);
-    } else {
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-      timer.style.display = 'none';
-    }
-  }
-
-  // --- ОСНОВНАЯ ЛОГИКА ---
-  function updateUI() {
-    document.getElementById('coinsDisplay').textContent = Math.floor(coins).toLocaleString('en-US');
-    document.getElementById('energyText').textContent = Math.floor(energy);
-    document.getElementById('levelDisplay').textContent = level;
-
-    const cost = getLevelCost(level);
-    let progress = (coins / cost) * 100;
-    if (progress > 100) progress = 100;
-    document.getElementById('progressFill').style.width = progress + '%';
-
-    if (coins >= cost) levelUp();
-
-    const passive = getPassiveIncome();
-    const profitDisplay = document.getElementById('profitDisplay');
-    if (passive > 0) {
-      profitDisplay.style.display = 'block';
-      profitDisplay.textContent = `💼 Доход: +${passive.toLocaleString('en-US')}/сек`;
-    } else {
-      profitDisplay.style.display = 'none';
-    }
-
-    const multitapCost = Math.floor(500 * Math.pow(1.05, multitapLevel - 1));
-    const upgBtn = document.getElementById('upgradeBtn');
-    
-    if (coins >= multitapCost) {
-      upgBtn.classList.add('affordable');
-    } else {
-      upgBtn.classList.remove('affordable');
-    }
-  }
-
-  function tapHamster(e) {
-    if (energy <= 0) return;
-    energy -= 1;
-    let reward = multitapLevel;
-    if (boostActive) reward *= 5;
-    coins += reward;
-    
-    const circle = document.querySelector('.hamster-circle');
-    circle.style.transform = 'scale(0.95)';
-    setTimeout(() => circle.style.transform = 'scale(1)', 50);
-
-    showFloatText('+' + reward, '#ffd700', 14, e.clientX, e.clientY);
-    updateUI();
-    saveGame();
-  }
-
-  function showFloatText(text, color, size, x, y) {
-    const el = document.createElement('div');
-    el.className = 'float-coin';
-    el.textContent = text;
-    el.style.background = color;
-    el.style.boxShadow = `0 0 15px ${color}`;
-    el.style.fontSize = size + 'px';
-    el.style.color = '#1c1c1e';
-    
-    if (x && y) {
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-    } else {
-      el.style.left = '50%';
-      el.style.top = '40%';
-    }
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1000);
-  }
-
-  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-  setInterval(() => {
-    if (energy < maxEnergy) {
-      energy = Math.min(maxEnergy, energy + 3);
-      updateUI();
-    }
-  }, 1000);
-
-  function saveGame() {
-    localStorage.setItem('hamster_game_save', JSON.stringify({ 
-      coins, level, energy, dailyStreak, lastDailyDate, 
-      multitapLevel, lastBoostTime, playerName, playerAvatar,
-      businessLevels, lastCipherDate
-    }));
-  }
-
-  document.querySelectorAll('.modal-overlay').forEach(modal => {
-    modal.addEventListener('click', function(e) {
-      if (e.target === this) closeModal(this.id);
-    });
-  });
-
-  loadGame();
+// Отправка по нажатию на Enter
+inputEl.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendMessage();
+});
 </script>
 </body>
 </html>
